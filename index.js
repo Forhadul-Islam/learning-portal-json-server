@@ -1,10 +1,16 @@
 const jsonServer = require("json-server");
-const server = jsonServer.create();
 const router = jsonServer.router("db.json");
+const auth = require("json-server-auth");
 const middleware = jsonServer.defaults();
 const port = process.env.PORT || 8080;
 
-server.use(middleware);
-server.use(router);
+const app = jsonServer.create();
+app.use(middleware);
 
-server.listen(port);
+// /!\ Bind the router db to the app
+app.db = router.db;
+
+// You must apply the auth middleware before the router
+app.use(auth);
+app.use(router);
+app.listen(port);
